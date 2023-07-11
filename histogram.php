@@ -66,13 +66,15 @@ class Histogram {
             $flowT = $flowT_data[$i];
             
             // calculate histogram allocation
-            $div = "".(floor($flowT / $histogram_div) * $histogram_div);
-            // add to histogram
-            if (!isset($histogram[$div])) {
-                $histogram[$div] = 0;
+            if ($flowT>20 && $flowT<85) {
+                $div = "".(floor($flowT / $histogram_div) * $histogram_div);
+                // add to histogram
+                if (!isset($histogram[$div])) {
+                    $histogram[$div] = 0;
+                }
+                $kwh_inc = $power * $power_to_kwh;
+                $histogram[$div] += $kwh_inc;
             }
-            $kwh_inc = $power * $power_to_kwh;
-            $histogram[$div] += $kwh_inc;
         }
         
         return $this->format($histogram,$histogram_div,$timer);
