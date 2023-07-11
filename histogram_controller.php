@@ -33,7 +33,7 @@ function histogram_controller() {
             }
             return $histogram->kwh_at_cop($elec,$heat,$start,$end,$div,$interval);
 
-        } else if ($route->subaction=="hwh_at_temperature") {
+        } else if ($route->subaction=="kwh_at_temperature") {
             $power = get("power",true);
             $temperature = get("temperature",true);
 
