@@ -20,6 +20,8 @@ function histogram_controller() {
         $end = get("end",true);
         $div = get("div",true);
         $interval = get("interval",true);
+        $x_min = get("x_min",true);
+        $x_max = get("x_max",true);
 
         if ($route->subaction=="kwh_at_cop") {
             $elec = get("elec",true);
@@ -31,7 +33,7 @@ function histogram_controller() {
             if (!$feed->read_access($session['userid'],$heat)) {
                 return array("success"=>false, "message"=>"invalid access");
             }
-            return $histogram->kwh_at_cop($elec,$heat,$start,$end,$div,$interval);
+            return $histogram->kwh_at_cop($elec,$heat,$start,$end,$div,$interval,$x_min,$x_max);
 
         } else if ($route->subaction=="kwh_at_temperature") {
             $power = get("power",true);
@@ -43,7 +45,7 @@ function histogram_controller() {
             if (!$feed->read_access($session['userid'],$temperature)) {
                 return array("success"=>false, "message"=>"invalid access");
             }
-            return $histogram->hwh_at_temperature($power,$temperature,$start,$end,$div,$interval);
+            return $histogram->hwh_at_temperature($power,$temperature,$start,$end,$div,$interval,$x_min,$x_max);
 
         } else {
             return array("success"=>false, "message"=>"invalid subaction");
