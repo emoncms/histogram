@@ -47,6 +47,24 @@ function histogram_controller() {
             }
             return $histogram->hwh_at_temperature($power,$temperature,$start,$end,$div,$interval,$x_min,$x_max);
 
+        } else if ($route->subaction=="flow_temp_curve") {
+            $outsideT = get("outsideT",true);
+            $flowT = get("flowT",true);
+            $heat = get("heat",true);
+
+            if (!$feed->read_access($session['userid'],$outsideT)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+            if (!$feed->read_access($session['userid'],$flowT)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+            if (!$feed->read_access($session['userid'],$heat)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+
+            $route->format = "text";
+            return $histogram->flow_temp_curve($outsideT,$flowT,$heat,$start,$end,$div,$interval,$x_min,$x_max);
+
         } else {
             return array("success"=>false, "message"=>"invalid subaction");
         }
