@@ -83,6 +83,46 @@ class Histogram {
         
         return $this->format($histogram,$histogram_div,$timer);
     }
+    
+    function hwh_at_flow_minus_outside($id_power,$id_flow,$id_outside,$start,$end,$histogram_div,$interval,$temperature_min,$temperature_max) {
+        $histogram_div = (float) $histogram_div;
+        $interval = (int) $interval;
+        $temperature_min = (float) $temperature_min;
+        $temperature_max = (float) $temperature_max;
+        
+        $start = floor($start / $interval) * $interval;
+        $end = floor($end / $interval) * $interval;
+        $power_to_kwh = $interval / 3600000;
+        
+        $power_data = $this->feed->get_data($id_power,$start,$end,$interval,1,"UTC","notime");
+        $flow_data = $this->feed->get_data($id_flow,$start,$end,$interval,1,"UTC","notime");
+        $outside_data = $this->feed->get_data($id_outside,$start,$end,$interval,1,"UTC","notime");
+        $npoints = count($power_data);
+        
+        $histogram = array();
+        
+        $timer = microtime(true);
+        for ($i=0; $i<$npoints; $i++) {
+            $power = $power_data[$i];
+            $flow = $flow_data[$i];
+            $outside = $outside_data[$i];
+            
+            $temperature = $flow - $outside;
+            
+            // calculate histogram allocation
+            if ($temperature>=$temperature_min && $temperature<=$temperature_max) {
+                $div = "".(floor($temperature / $histogram_div) * $histogram_div);
+                // add to histogram
+                if (!isset($histogram[$div])) {
+                    $histogram[$div] = 0;
+                }
+                $kwh_inc = $power * $power_to_kwh;
+                $histogram[$div] += $kwh_inc;
+            }
+        }
+        
+        return $this->format($histogram,$histogram_div,$timer);
+    }
 
     public function flow_temp_curve($outsideT,$flowT,$heat,$start,$end,$div,$interval,$x_min,$x_max) {
         $div = (float) $div;
