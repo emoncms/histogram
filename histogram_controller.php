@@ -62,7 +62,23 @@ function histogram_controller() {
                 return array("success"=>false, "message"=>"invalid access");
             }
             return $histogram->hwh_at_flow_minus_outside($power,$flow,$outside,$start,$end,$div,$interval,$x_min,$x_max);
-            
+
+        } else if ($route->subaction=="kwh_at_ideal_carnot") {
+            $power = get("power",true);
+            $flow = get("flow",true);
+            $outside = get("outside",true);
+
+            if (!$feed->read_access($session['userid'],$power)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+            if (!$feed->read_access($session['userid'],$flow)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+            if (!$feed->read_access($session['userid'],$outside)) {
+                return array("success"=>false, "message"=>"invalid access");
+            }
+            return $histogram->hwh_at_ideal_carnot($power,$flow,$outside,$start,$end,$div,$interval,$x_min,$x_max);
+
         } else if ($route->subaction=="flow_temp_curve") {
             $outsideT = get("outsideT",true);
             $flowT = get("flowT",true);
